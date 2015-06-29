@@ -1,34 +1,37 @@
 #!/bin/sh
 
 TICKETNUMBER=''
-LIST=''
+PRINTERLIST=''
 PRINTNAME=''
+DATE=$(date +%d-%b)
 
 main ()
 {
 
-    while getopts ":h" ARG
+    while getopts ":p:h" ARG
     do
         case $ARG in
-            h)#print the help message
+             h)#print the help message
                print_help_message
-              exit 0;;
-        esac
+               exit 0;;
+
+             p)
+               PRINTNAME=$OPTARG;;
+
+             ?)
+              command_not_found
+              exit 20;;
+      esac
     done
-    case $1 in
-      -p)
-          PRINTNAME=$2;;
-       *)
-          command_not_found
-          exit 20;;
-    esac
-    shift $(expr $OPTIND ) # shifts the remaining arguments
-    if [ ! -z "$1" ]; then 
+    shift $(expr $OPTIND - 1  ) # shifts the remaining arguments
+
+		if [[ ! -z "$1" ]] || [[ -z $PRINTNAME ]]; then 
        command_not_found
-       exit 50; 
+       exit 20;
     fi
 
     #program call
+    print_awk
     return
 }
 
@@ -38,7 +41,8 @@ command_not_found ()
 	
 
 
-COMMAND NOT FOUND
+           INVALID COMMAND 
+
 ---------------Try Again-----------------
 
 
@@ -62,5 +66,12 @@ Usage: $(basename $0) [OPTION] ..
 	EOF
     return
 }
+
+print_awk()
+{
+		SNOT=$(snot -l)
+    echo $SNOT
+}
+
 main $@
-exit 0
+exit 0;
